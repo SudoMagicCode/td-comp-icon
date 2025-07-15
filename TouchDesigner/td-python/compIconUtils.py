@@ -1,7 +1,6 @@
 
 read_only_pars: list[str] = ['Dirty', 'External']
 op_color_pars: list[str] = ['default', 'select', 'font', 'icon']
-user_colors_table = parent.iconComp.op('table_user_colors')
 
 
 def set_parent_shortcut():
@@ -13,6 +12,8 @@ def set_parent_shortcut():
 
 
 def build_menu_pars() -> None:
+    set_parent_shortcut()
+    user_colors_table = parent.iconComp.op('table_user_colors')
     rows: list[list[str]] = []
     rows.append(['label', 'name'])
 
