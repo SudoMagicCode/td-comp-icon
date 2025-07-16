@@ -20,7 +20,7 @@ def build_menu_pars() -> None:
     for eachOp in list(families.keys()):
         rows.append([eachOp, eachOp.title()])
 
-    userColors = parent.iconComp.seq.Usercolor
+    userColors = op.icon_ui.par.Colordefinitons.seq.Usercolor
     for eachBlock in userColors.blocks:
         for eachPar in eachBlock:
             if 'name' in eachPar.name:
@@ -36,9 +36,9 @@ def color_from_name_and_type(menuName: str, parType: str) -> tuple:
 
     if parent.iconComp.par.Usecolordefiniton:
         if menuName.eval() in [each.title() for each in families.keys()]:
-            return parent.iconComp.parGroup[f'{menuName.eval().title()}{parType}']
+            return op.icon_ui.par.Colordefinitons.parGroup[f'{menuName.eval().title()}{parType}']
         else:
-            return parent.iconComp.parGroup[f'Usercolor{menuName.eval()}{parType}']
+            return op.icon_ui.par.Colordefinitons.parGroup[f'Usercolor{menuName.eval()}{parType}']
     else:
         match parType:
             case 'select':
@@ -52,9 +52,9 @@ def color_from_name_and_type(menuName: str, parType: str) -> tuple:
 def icon_str(menuName: str) -> str:
     if parent.iconComp.par.Usecolordefiniton:
         if menuName.eval() in [each.title() for each in families.keys()]:
-            return eval(f"chr(0x{parent.iconComp.par[f'{menuName.eval().title()}icon']})")
+            return eval(f"chr(0x{op.icon_ui.par.Colordefinitons.par[f'{menuName.eval().title()}icon']})")
         else:
-            return eval(f"chr(0x{parent.iconComp.par[f'Usercolor{menuName.eval().title()}icon']})")
+            return eval(f"chr(0x{op.icon_ui.par.Colordefinitons.par[f'Usercolor{menuName.eval().title()}icon']})")
     else:
         if parent.iconComp.par.Iconcode.eval() == '':
             return eval('chr(0x0000)')
