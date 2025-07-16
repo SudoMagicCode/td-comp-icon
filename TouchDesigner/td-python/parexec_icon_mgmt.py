@@ -5,7 +5,7 @@
 #
 # Make sure the corresponding toggle is enabled in the Parameter Execute DAT.
 
-import parActions
+import iconMgmtActions
 
 
 def onValueChange(par, prev):
@@ -27,7 +27,7 @@ def onValuesChanged(changes):
 def onPulse(par):
 
     try:
-        func = getattr(parActions, par.name)
+        func = getattr(iconMgmtActions, par.name)
         func(par)
     except Exception as e:
         ...
