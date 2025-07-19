@@ -14,18 +14,49 @@ class iconMgmt:
     def _get_icon_ops_by_name(self) -> list:
         return root.findChildren(name='base_icon')
 
-    def update_icon_ops(self) -> None:
-        if self.Owner_op.par.Checkforicontags:
+    @property
+    def All_icon_ops(self) -> list:
+        self._get_icon_ops_by_tags()
 
-            all_icons: list = self._get_icon_ops_by_name()
-            for each_icon_op in all_icons:
+    def update_icon_ops(self) -> None:
+        all_icons: list = self._get_icon_ops_by_name()
+        for each_icon_op in all_icons:
+            if self.Owner_op.par.Checkforicontags:
+                # add icon tag
                 if iconMgmt.ICON_TAG not in each_icon_op.tags:
                     each_icon_op.tags.add(iconMgmt.ICON_TAG)
 
+            # turn off active cloning -
+            each_icon_op.par.enablecloning = False
+
+            # check for empty default color def
+            if each_icon_op.par.Colordefinitons.eval() in ['', None]:
+                self._reset_color_defs_to_default(each_icon_op)
+            else:
+                pass
+
+            # conform all icon ops to same op color
+            self._set_icon_op_color(each_icon_op)
+
+    def _reset_color_defs_to_default(self, icon_op) -> None:
+        icon_op.par.Colordefinitons.reset()
+        icon_op.par.Lockcolordefinitions = True
+
+    def _set_icon_op_color(self, icon_op) -> None:
+        icon_op.color = (self.Owner_op.par.Iconopcolorr,
+                         self.Owner_op.par.Iconopcolorg, self.Owner_op.par.Iconopcolorb)
+
+    def Upgrade_icons(self) -> None:
+        all_icons: list = self._get_icon_ops_by_tags()
+        for each_icon_op in all_icons:
+            self._log_msg(f'upgrading {each_icon_op.path}')
+            each_icon_op.par.enablecloningpulse.pulse()
+
     def Reset_all(self) -> None:
-        all_icons: list = self._get_icon_ops_by_name()
+        all_icons: list = self._get_icon_ops_by_tags()
         for each_icon_op in all_icons:
             each_icon_op.par.Restoredefaults.pulse()
+            self._log_msg(f'Restoring defaults {each_icon_op.path}')
 
     def Create_project_color_defs(self) -> None:
         color_defs_op = op.icon_ui.parent().copy(self.color_defs_template)
@@ -36,3 +67,12 @@ class iconMgmt:
         for each_icon_comp in self._get_icon_ops_by_tags():
             each_icon_comp.par.Lockcolordefinitions = False
             each_icon_comp.par.par.Colordefinitons.expr = "op.icon_ui.docked[0]"
+
+    def Set_global_color_defs(self, color_defs) -> None:
+        all_icons: list = self._get_icon_ops_by_tags()
+        for each_icon_op in all_icons:
+            each_icon_op.par.Lockcolordefinitions = False
+            each_icon_op.par.ColorDefinitions = color_defs
+
+    def _log_msg(self, msg: str) -> None:
+        print(f'ICON COMP MGMT | {msg}')
