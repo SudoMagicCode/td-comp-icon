@@ -2,6 +2,7 @@
     "BUILD": "TRUE",
     "TD_VERSION": "2023.12370",
     "PROJECT_FILE": "./TouchDesigner/project.toe",
-    "REPO": "https://github.com/SudoMagicCode/td-comp-icon",
-    "COMP_NAME": "base_icon_ui"
+    "COMP_NAME": "base_icon_ui",
+    "BUILD_CONTENTS": "packageZip",
+    "USE_TDM": true
 }
