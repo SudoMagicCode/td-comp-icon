@@ -30,16 +30,20 @@ class iconMgmt:
             each_icon_op.par.enablecloning = False
 
             # check for empty default color def
-            if each_icon_op.par.Colordefinitons.eval() in ['', None]:
-                self._reset_color_defs_to_default(each_icon_op)
-            else:
+            try:
+                if each_icon_op.par.Colordefinitions.eval() in ['', None]:
+                    self._reset_color_defs_to_default(each_icon_op)
+                else:
+                    pass
+            except Exception:
+                print(each_icon_op)
                 pass
 
             # conform all icon ops to same op color
             self._set_icon_op_color(each_icon_op)
 
     def _reset_color_defs_to_default(self, icon_op) -> None:
-        icon_op.par.Colordefinitons.reset()
+        icon_op.par.Colordefinitions.reset()
         icon_op.par.Lockcolordefinitions = True
 
     def _set_icon_op_color(self, icon_op) -> None:
@@ -66,7 +70,7 @@ class iconMgmt:
 
         for each_icon_comp in self._get_icon_ops_by_tags():
             each_icon_comp.par.Lockcolordefinitions = False
-            each_icon_comp.par.par.Colordefinitons.expr = "op.icon_ui.docked[0]"
+            each_icon_comp.par.par.Colordefinitions.expr = "op.icon_ui.docked[0]"
 
     def Set_global_color_defs(self, color_defs) -> None:
         all_icons: list = self._get_icon_ops_by_tags()

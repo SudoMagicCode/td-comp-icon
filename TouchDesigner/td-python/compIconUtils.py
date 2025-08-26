@@ -21,7 +21,7 @@ def add_icon_tag():
 def color_defs_op():
     '''Returns a color definition op - a base COMP with custom pars for colors that follow a known pattern
     '''
-    return parent.iconComp.par.Colordefinitons.eval()
+    return parent.iconComp.par.Colordefinitions.eval()
 
 
 def build_menu_pars() -> None:
@@ -51,7 +51,7 @@ def color_from_name_and_type(menuName: str, parType: str) -> tuple:
     '''Resolves color for pars
     '''
 
-    if parent.iconComp.par.Usecolordefiniton:
+    if parent.iconComp.par.Usecolordefinition:
         if menuName.eval() in [each.title() for each in families.keys()]:
             return color_defs_op().parGroup[f'{menuName.eval().title()}{parType}']
         else:
@@ -69,7 +69,7 @@ def color_from_name_and_type(menuName: str, parType: str) -> tuple:
 def icon_str(menuName: str) -> str:
     '''Resolves icon string
     '''
-    if parent.iconComp.par.Usecolordefiniton:
+    if parent.iconComp.par.Usecolordefinition:
         if menuName.eval() in [each.title() for each in families.keys()]:
             return eval(f"chr(0x{color_defs_op().par[f'{menuName.eval().title()}icon']})")
         else:
@@ -87,12 +87,12 @@ def add_custom_definitions() -> None:
     new_defs.nodeY = parent.iconComp.nodeY - (parent.iconComp.nodeHeight + 20)
     new_defs.dock = parent.iconComp
 
-    parent.iconComp.par.Colordefinitons = new_defs
+    parent.iconComp.par.Colordefinitions = new_defs
 
 
 def reset_color_defs() -> None:
     parent.iconComp.par.Lockcolordefinitions = False
-    parent.iconComp.par.Colordefinitons.reset()
+    parent.iconComp.par.Colordefinitions.reset()
     parent.iconComp.par.Lockcolordefinitions = True
 
 
