@@ -1,49 +1,52 @@
-name: Auto Tagging
+name: Create TOX Release
 
 on:
   push:
     branches:
       - main
 
+
 jobs:
-  tag:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
+  Build_tox:
+    runs-on: [self-hosted, Windows, TouchDesigner]
     steps:
-      - name: Checkout code
+      - name: Check out repository code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Essential for git describe and rev-list
+          fetch-depth: 0
+          fetch-tags: true
+          submodules: true 
 
-      - name: Generate Version Number
-        id: get_version
+      - name: SudoMagic TD Package Builder
+        uses: SudoMagicCode/action-build-td-tox-package@v0.0.3
+        with:
+          build_settings: ./buildSettings.json
+
+      - name: Generate Hybrid Version
+        id: semver
         run: |
-          # 1. Get the latest tag (e.g., v1.2)
-          # If no tags exist, fallback to v0.0
+          # Find latest tag (e.g., v1.0) or default to v0.0
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0")
           
-          # 2. Get count of commits since that tag
-          # If it's a fresh repo with no tags, count all commits
+          # Count commits since that tag
           if [ "$LATEST_TAG" = "v0.0" ]; then
             COUNT=$(git rev-list --count HEAD)
           else
             COUNT=$(git rev-list --count $LATEST_TAG..HEAD)
           fi
 
-          # 3. Construct the hybrid version
-          # This creates v1.2.x where x is the number of commits since v1.2
+          # Construct version (e.g., v1.0.42)
           VERSION="$LATEST_TAG.$COUNT"
-          
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Create and Push Tag
-        uses: actions/github-script@v7
+          
+      - name: Create Github Release
+        uses:  softprops/action-gh-release@v2
         with:
-          script: |
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: 'refs/tags/${{ steps.get_version.outputs.VERSION }}',
-              sha: context.sha
-            })
+          tag_name: ${{ steps.semver.outputs.VERSION }}
+          name: Release ${{ steps.semver.outputs.VERSION }}
+          # Generates "What's Changed" section automatically from PRs/commits
+          generate_release_notes: true
+          # Set to true if you want it to stay hidden until you review it
+          draft: false 
+          prerelease: false
+          files: ./release/package.zip
