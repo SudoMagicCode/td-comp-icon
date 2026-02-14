@@ -1,4 +1,5 @@
-name: push to main branch
+name: Create release from Tag
+
 on:
   push:
     tags:
