@@ -1,8 +1,5 @@
 name: Auto Tagging
 
-permissions:
-  contents: write
-
 on:
   push:
     branches:
@@ -11,22 +8,35 @@ on:
 jobs:
   tag:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          # Necessary to fetch all history for an accurate count
-          fetch-depth: 0
+          fetch-depth: 0 # Essential for git describe and rev-list
+          fetch-tags: true
 
       - name: Generate Version Number
         id: get_version
         run: |
-          # Get the total number of commits on the current branch
-          COUNT=$(git rev-list --count HEAD)
-          # Define your base version
-          BASE="1.0"
-          # Set the output variable
-          echo "VERSION=v$BASE.$COUNT" >> $GITHUB_OUTPUT
+          # 1. Get the latest tag (e.g., v1.2)
+          # If no tags exist, fallback to v0.0
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0")
+          
+          # 2. Get count of commits since that tag
+          # If it's a fresh repo with no tags, count all commits
+          if [ "$LATEST_TAG" = "v0.0" ]; then
+            COUNT=$(git rev-list --count HEAD)
+          else
+            COUNT=$(git rev-list --count $LATEST_TAG..HEAD)
+          fi
+
+          # 3. Construct the hybrid version
+          # This creates v1.2.x where x is the number of commits since v1.2
+          VERSION="$LATEST_TAG.$COUNT"
+          
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Create and Push Tag
         uses: actions/github-script@v7
