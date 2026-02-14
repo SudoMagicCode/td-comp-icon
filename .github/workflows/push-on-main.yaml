@@ -15,7 +15,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Essential for git describe and rev-list
-          fetch-tags: true
 
       - name: Generate Version Number
         id: get_version
