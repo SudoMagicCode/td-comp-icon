@@ -1,9 +1,8 @@
-name: push to version tag
+name: push to main branch
 on:
   push:
-    tags:
-      - v*
-
+    branches:
+      - main
 jobs:
   Build_tox:
     runs-on: [self-hosted, Windows, TouchDesigner]
