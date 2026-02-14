@@ -25,19 +25,18 @@ jobs:
       - name: Generate Hybrid Version
         id: semver
         run: |
-          # Find latest tag (e.g., v1.0) or default to v0.0
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0")
-          
-          # Count commits since that tag
-          if [ "$LATEST_TAG" = "v0.0" ]; then
-            COUNT=$(git rev-list --count HEAD)
-          else
-            COUNT=$(git rev-list --count $LATEST_TAG..HEAD)
-          fi
+          # PowerShell equivalent of the git logic
+          $LATEST_TAG = git describe --tags --abbrev=0 2>$null
+          if ($LASTEXITCODE -ne 0) { $LATEST_TAG = "v0.0" }
 
-          # Construct version (e.g., v1.0.42)
-          VERSION="$LATEST_TAG.$COUNT"
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          if ($LATEST_TAG -eq "v0.0") {
+            $COUNT = git rev-list --count HEAD
+          } else {
+            $COUNT = git rev-list --count "$LATEST_TAG..HEAD"
+          }
+
+          $VERSION = "$LATEST_TAG.$COUNT"
+          echo "VERSION=$VERSION" >> $env:GITHUB_OUTPUT
           
       - name: Create Github Release
         uses:  softprops/action-gh-release@v2
