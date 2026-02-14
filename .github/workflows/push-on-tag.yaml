@@ -1,8 +1,8 @@
 name: push to main branch
 on:
   push:
-    branches:
-      - main
+    tags:
+      - v*
 jobs:
   Build_tox:
     runs-on: [self-hosted, Windows, TouchDesigner]
@@ -15,7 +15,7 @@ jobs:
           submodules: true 
 
       - name: SudoMagic TD Package Builder
-        uses: SudoMagicCode/action-build-td-tox-package@v0.0.2
+        uses: SudoMagicCode/action-build-td-tox-package@v0.0.3
         with:
           build_settings: ./buildSettings.json
 
