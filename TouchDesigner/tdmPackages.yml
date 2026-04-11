@@ -1,4 +1,6 @@
 name: TD-COMP-Icon
-tdVersion: 2025.32280.Project
+tdVersion: 2025.32460.Project
 tdPackages:
+    - package: github.com/SudoMagicCode/td-packager-comp
+      releaseTag: v0.2.27
 pythonRequirements: []

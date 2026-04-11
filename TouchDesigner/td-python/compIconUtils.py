@@ -24,16 +24,18 @@ def color_defs_op():
     return parent.iconComp.par.Colordefinitions.eval()
 
 
+def op_colors_op():
+    '''Returns a color definition op - a base COMP with custom pars for colors that follow a known pattern
+    '''
+    return op('op_colors')
+
+
 def build_menu_pars() -> None:
     '''Builds menu parameters into a DAT
     '''
     set_parent_shortcut()
     user_colors_table = parent.iconComp.op('table_user_colors')
     rows: list[list[str]] = []
-    rows.append(['label', 'name'])
-
-    for eachOp in list(families.keys()):
-        rows.append([eachOp, eachOp.title()])
 
     userColors = color_defs_op().seq.Usercolor
     for eachBlock in userColors.blocks:
@@ -53,7 +55,7 @@ def color_from_name_and_type(menuName: str, parType: str) -> tuple:
 
     if parent.iconComp.par.Usecolordefinition:
         if menuName.eval() in [each.title() for each in families.keys()]:
-            return color_defs_op().parGroup[f'{menuName.eval().title()}{parType}']
+            return op_colors_op().parGroup[f'{menuName.eval().title()}{parType}']
         else:
             return color_defs_op().parGroup[f'Usercolor{menuName.eval()}{parType}']
     else:
@@ -71,7 +73,7 @@ def icon_str(menuName: str) -> str:
     '''
     if parent.iconComp.par.Usecolordefinition:
         if menuName.eval() in [each.title() for each in families.keys()]:
-            return eval(f"chr(0x{color_defs_op().par[f'{menuName.eval().title()}icon']})")
+            return eval(f"chr(0x{op_colors_op().par[f'{menuName.eval().title()}icon']})")
         else:
             return eval(f"chr(0x{color_defs_op().par[f'Usercolor{menuName.eval().title()}icon']})")
     else:
